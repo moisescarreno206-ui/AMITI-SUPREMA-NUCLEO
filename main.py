@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template_string
-from modulos import seguridad, autonomia, memoria
-
+from modulos import seguridad
+from modulos import autonomia
+from modulos import memoria
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST', 'HEAD'])
