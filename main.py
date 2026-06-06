@@ -1,7 +1,7 @@
 from flask import Flask, request
-import modulos.seguridad as seguridad
-import modulos.autonomia as autonomia
-import modulos.memoria as memoria
+import seguridad
+import autonomia
+import memoria
 
 app = Flask(__name__)
 
@@ -14,7 +14,6 @@ def index():
     msg_salida = "AMITI NUCLEO SUPREMO: Estado activo"
     
     if request.method == 'POST':
-        # Verificamos seguridad
         if seguridad.verificar(request.form.get("llave")):
             comando = request.form.get("msg")
             msg_salida = f"EJECUTADO: {comando}"
