@@ -1,27 +1,26 @@
-from flask import Flask, request
-import seguridad
+from flask import Flask, render_template_string
 import autonomia
 import memoria
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST', 'HEAD'])
+# Plantilla de página que se auto-refresca cada 2 segundos
+HTML_TEMPLATE = """
+<html>
+    <head><meta http-equiv="refresh" content="2"></head>
+    <body>
+        <h1>AMITI NUCLEO SUPREMO</h1>
+        <p>Estado: {{ estado }}</p>
+        <p>Registros en memoria: {{ conteo }}</p>
+    </body>
+</html>
+"""
+
+@app.route('/')
 def index():
-    if request.method == 'HEAD':
-        return ""
-    
     autonomia.ejecutar_ciclo()
-    msg_salida = "AMITI NUCLEO SUPREMO: Estado activo"
-    
-    if request.method == 'POST':
-        if seguridad.verificar(request.form.get("llave")):
-            comando = request.form.get("msg")
-            msg_salida = f"EJECUTADO: {comando}"
-            memoria.registrar(comando, msg_salida)
-        else:
-            msg_salida = "ERROR: Llave de seguridad inválida"
-            
-    return msg_salida
+    conteo = memoria.contar_registros()
+    return render_template_string(HTML_TEMPLATE, estado="Operando con iniciativa", conteo=conteo)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
