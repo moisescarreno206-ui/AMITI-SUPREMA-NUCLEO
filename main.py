@@ -1,27 +1,23 @@
-from flask import Flask, render_template_string
+import threading
+import time
 import autonomia
+from flask import Flask, render_template_string
 import memoria
 
 app = Flask(__name__)
 
-# Plantilla de página que se auto-refresca cada 2 segundos
-HTML_TEMPLATE = """
-<html>
-    <head><meta http-equiv="refresh" content="2"></head>
-    <body>
-        <h1>AMITI NUCLEO SUPREMO</h1>
-        <p>Estado: {{ estado }}</p>
-        <p>Registros en memoria: {{ conteo }}</p>
-    </body>
-</html>
-"""
+# Función que corre en segundo plano
+def bucle_autonomo():
+    while True:
+        autonomia.ejecutar_ciclo()
+        time.sleep(60) # Espera 60 segundos antes de volver a pensar
+
+# Iniciar el hilo al arrancar
+threading.Thread(target=bucle_autonomo, daemon=True).start()
 
 @app.route('/')
 def index():
-    autonomia.ejecutar_ciclo()
-    conteo = memoria.contar_registros()
-    return render_template_string(HTML_TEMPLATE, estado="Operando con iniciativa", conteo=conteo)
+    return "AMITI NUCLEO SUPREMO: Estado activo. Pensando en segundo plano..."
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-    
