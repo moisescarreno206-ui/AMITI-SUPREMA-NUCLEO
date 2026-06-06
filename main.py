@@ -1,5 +1,7 @@
 from flask import Flask, request
-from modulos import seguridad, autonomia, memoria
+import modulos.seguridad as seguridad
+import modulos.autonomia as autonomia
+import modulos.memoria as memoria
 
 app = Flask(__name__)
 
@@ -7,12 +9,12 @@ app = Flask(__name__)
 def index():
     if request.method == 'HEAD':
         return ""
-        
+    
     autonomia.ejecutar_ciclo()
     msg_salida = "AMITI NUCLEO SUPREMO: Estado activo"
     
     if request.method == 'POST':
-        # Verificamos seguridad antes de procesar
+        # Verificamos seguridad
         if seguridad.verificar(request.form.get("llave")):
             comando = request.form.get("msg")
             msg_salida = f"EJECUTADO: {comando}"
