@@ -6,18 +6,38 @@ import memoria
 
 app = Flask(__name__)
 
-# Función que corre en segundo plano
+# --- BUCLE AUTÓNOMO EN SEGUNDO PLANO ---
 def bucle_autonomo():
     while True:
-        autonomia.ejecutar_ciclo()
-        time.sleep(60) # Espera 60 segundos antes de volver a pensar
+        try:
+            autonomia.ejecutar_ciclo()
+        except Exception as e:
+            print(f"Error en bucle autónomo: {e}")
+        time.sleep(60) # AMITI piensa cada 60 segundos
 
-# Iniciar el hilo al arrancar
+# Iniciamos el bucle al arrancar el servidor
 threading.Thread(target=bucle_autonomo, daemon=True).start()
+
+# --- INTERFAZ WEB ---
+HTML_TEMPLATE = """
+<html>
+    <head><meta http-equiv="refresh" content="5"></head>
+    <body>
+        <h1>AMITI NUCLEO SUPREMO</h1>
+        <p>Estado: Operando de forma autónoma</p>
+        <p>Ciclos de pensamiento ejecutados: {{ conteo }}</p>
+        <hr>
+        <p><i>El sistema se actualiza automáticamente cada 5 segundos.</i></p>
+    </body>
+</html>
+"""
 
 @app.route('/')
 def index():
-    return "AMITI NUCLEO SUPREMO: Estado activo. Pensando en segundo plano..."
+    conteo = memoria.contar_registros()
+    return render_template_string(HTML_TEMPLATE, conteo=conteo)
 
 if __name__ == '__main__':
+    # Flask corriendo en modo servidor
     app.run(host='0.0.0.0', port=5000)
+    
