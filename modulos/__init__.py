@@ -1,4 +1,1 @@
-from . import seguridad
-from . import autonomia
-from . import memoria
-
+from . import seguridad, autonomia, memoria
